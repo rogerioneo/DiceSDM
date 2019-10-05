@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -20,6 +21,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private ImageView resultadoImageView;
 
+    private Spinner numDadosSpinner;
+    private ImageView resultado2ImageView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -35,13 +39,35 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         jogarDadoButton.setOnClickListener(this);
 
         resultadoImageView = findViewById(R.id.resultadoImageView);
+
+        numDadosSpinner = findViewById(R.id.numDadosSpinner);
+        resultado2ImageView = findViewById(R.id.resultado2ImageView);
     }
 
     public void onClick(View view) {
         if (view.getId() == R.id.jogarDadoButton) {
-            int resultado = geradorRandomico.nextInt(6) + 1;
-            resultadoTextView.setText(getString(R.string.face_sorteada) + resultado);
-            setImageResource(resultadoImageView, resultado);
+            // Recuperando o número de dados selecionados
+            int numDados = Integer.parseInt(
+                    numDadosSpinner.getSelectedItem().toString());
+            // String que armazena números sorteados
+            String resultadoText = "Faces sorteadas: ";
+            // Visibilidade do resultado2ImageView de acordo com número de dados
+            if (numDados == 2) {
+                resultado2ImageView.setVisibility(View.VISIBLE);
+            }
+            else {
+                resultado2ImageView.setVisibility(View.GONE);
+                resultadoText = "Face sorteada: ";
+            }
+            // Sorteando números de acordo com número de dados
+            for (int i = 1; i <= numDados; i++) {
+                int resultado = geradorRandomico.nextInt(6) + 1;
+                resultadoText += resultado + ", ";
+                ImageView iv = (i == 1) ? resultadoImageView : resultado2ImageView;
+                setImageResource(iv, resultado);
+            }
+            resultadoTextView.setText(
+                    resultadoText.substring(0, resultadoText.lastIndexOf(',')));
         }
     }
 
